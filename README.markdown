@@ -3,7 +3,7 @@ Apple Apn Push Notifications
 
 The AppleApnPushBundle adds support apple push notifications.
 
-[![Build Status](https://travis-ci.org/ZhukV/AppleApnPushBundle.png?branch=master)](https://travis-ci.org/ZhukV/AppleApnPushBundle)
+[![Build Status](https://travis-ci.org/ZhukV/AppleApnPushBundle.png)](https://travis-ci.org/ZhukV/AppleApnPushBundle)
 
 Documentation
 -------------
