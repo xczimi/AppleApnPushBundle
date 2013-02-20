@@ -1,0 +1,8 @@
+form:
+    device_token: 'Токен устройства'
+    notification_manager: 'Менеджер уведомлений'
+    body_message: 'Текст сообщения'
+    submit: 'Отправить PUSH'
+    title: 'Отправить PUSH уведомление'
+    send_success: 'PUSH уведомление успешно доставлено'
+    

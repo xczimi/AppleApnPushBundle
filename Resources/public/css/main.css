@@ -1,0 +1,79 @@
+*{
+    padding: 0; margin: 0;
+    font-family: 'Verdana';
+}
+
+input:focus, select:focus{ outline: none; }
+
+.cl-b{ clear: both; }
+
+#page-wrapper-container{
+    width: 700px;
+    margin: 0 auto;
+    background-color: rgb(153, 153, 153);
+    background-color: rgba(153, 153, 153, 0.4);
+    padding: 10px;
+    border-radius: 15px;
+    -moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+    margin-top: 25px;
+}
+
+#page-wrapper{
+    background-color: rgb(255, 255, 255);
+    padding: 10px;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+
+#page-wrapper h1{
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 20px;
+    text-shadow: -1px -1px #e1e1e1;
+    color: #444;
+}
+
+#footer{
+    margin-top: 20px;
+    text-align: right;
+    font-size: 10px;
+}
+
+#error{
+   color: #900;
+   border:1px solid rgb(150, 0, 0);
+   border:1px solid rgba(150, 0, 0, 0.6);
+   padding: 5px 10px;
+   margin: 5px 0;
+}
+
+#success{
+    color: #090;
+    border:1px solid rgb(0, 150, 0);
+    border:1px solid rgba(0, 150, 0, 0.6);
+    padding: 5px 10px;
+    margin: 5px 0;
+}
+
+.field-item{ margin: 15px 0; }
+.field-item .label{ float: left; width: 280px; }
+.field-item .label label{}
+.field-item .field-container{ float: right; width:  390px; }
+.field-item .field-container input[type="text"],
+.field-item .field-container select
+{
+    width: 380px;
+    height: 25px;
+    background: #FFF;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    font-size: 14px;
+    padding: 0 3px;
+}
+
+.submit{ float: right; width: 380px; text-align: center; }

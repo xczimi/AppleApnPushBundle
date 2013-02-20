@@ -1,0 +1,19 @@
+{% extends 'AppleApnPushBundle::layout.html.twig' %}
+
+{% block page_title %}{% block title %}{{ 'form.title'|trans({}, 'apple_apn_push') }}{% endblock%}{% endblock %}
+
+{% form_theme form 'AppleApnPushBundle::form.html.twig' %}
+
+{% block page_success 'form.send_success'|trans({}, 'apple_apn_push') %}
+
+{% block page_wrapper %}
+    {% block apple_system_apn_push_test_form %}
+    <form method="POST" action="{{ path('apple_apn_push_send') }}">
+        {{ form_widget(form) }}
+        <div class="submit">
+            <input type="submit" value="{{ 'form.submit'|trans({}, 'apple_apn_push') }}" />
+        </div>
+        <div class="cl-b"></div>
+    </form>
+    {% endblock %}
+{% endblock %}

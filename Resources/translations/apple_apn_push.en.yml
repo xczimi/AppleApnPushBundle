@@ -1,0 +1,8 @@
+form:
+    device_token: 'Device token'
+    notification_manager: 'Notification manager'
+    body_message: 'Message text'
+    submit: 'Send message'
+    title: 'Send push message'
+    send_success: 'Push message successfully sent'
+    

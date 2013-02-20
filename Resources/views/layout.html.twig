@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{% block title '' %}</title>
+        {% block styles %}
+            <link rel="stylesheet" type="text/css" media="all" href="{{ asset('bundles/appleapnpush/css/main.css') }}" />
+        {% endblock %}
+        {% block javascripts %}
+        {% endblock %}
+    </head>
+
+    <body>
+        {% block page_wrapper_container %}
+            <div id="page-wrapper-container">
+                <div id="page-wrapper">
+                    <h1>{% block page_title 'AppleSystem' %}</h1>
+
+                    {% block page_error_container %}
+                        {% if error is defined and error %}
+                            <div id="error">{% block page_error error %}</div>
+                        {% endif %}
+                    {% endblock %}
+
+                    {% block page_success_container %}
+                        {% if success is defined and success == true %}
+                            <div id="success">{% block page_success '' %}</div>
+                        {% endif %}
+                    {% endblock %}
+
+                    <div id="page-content">
+                        {% block page_wrapper '' %}
+                    </div>
+
+                    <div id="footer">
+                        {% block footer_content %}
+                            <a target="_blank" href="https://github.com/ZhukV/AppleApnPushBundle">On GitHub</a>
+                        {% endblock %}
+                    </div>
+                </div>
+            </div>
+        {% endblock %}
+    </body>
+</html>

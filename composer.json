@@ -1,0 +1,27 @@
+{
+    "name": "apple/apn-push-bundle",
+    "description": "Apple apn push notifications",
+    "keywords": ["apple", "apn push", "notifications", "apn"],
+    "homepage": "http://github.com/ZhukV/AppleApnPushBundle",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Vitaliy Zhuk",
+            "email": "zhuk2205@gmail.com"
+        }
+    ],
+
+    "require": {
+        "php": ">=5.3.3",
+        "symfony/framework-bundle": ">=2.1,<2.3-dev",
+        "apple/apn-push": "dev-master"
+    },
+
+    "autoload": {
+        "psr-0": { "Apple\\ApnPushBundle": "" }
+    },
+
+    "target-dir": "Apple/ApnPushBundle",
+    "minimum-stability": "dev"
+}
