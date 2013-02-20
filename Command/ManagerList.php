@@ -49,10 +49,21 @@ class ManagerList extends ContainerAwareCommand
         $output->writeln('');
 
         foreach ($keys as $key) {
-            $output->writeln(sprintf('<info>  %s</info>', $key));
-            $output->writeln(sprintf('<comment>     self       - <info>%s</info></comment>', get_class($nm->getManager($key))));
-            $output->writeln(sprintf('<comment>     payload    - <info>%s</info></comment>', get_class($nm->getManager($key)->getPayloadFactory())));
-            $output->writeln(sprintf('<comment>     connection - <info>%s</info></comment>', get_class($nm->getManager($key)->getConnection())));
+            $manager = $nm->getManager($key);
+            $payload = $manager->getPayloadFactory();
+            $connection = $manager->getConnection();
+            $connectionReadTime = $connection->getReadTime();
+
+            $output->writeln(sprintf('<info>%s:</info>', $key));
+            $output->writeln('<comment>Notification manager:</comment>');
+            $output->writeln(sprintf('  %-30s<info>%s</info>', 'Class:', get_class($manager)));
+            $output->writeln('<comment>Payload factory:</comment>');
+            $output->writeln(sprintf('  %-30s<info>%s</info>', 'Class:', get_class($payload)));
+            $output->writeln(sprintf('  %-30s<info>%s</info>', 'Json unescaped unicode:', $payload->getJsonUnescapedUnicode() ? 'true' : 'false'));
+            $output->writeln('<comment>Connection:</comment>');
+            $output->writeln(sprintf('  %-30s<info>%s</info>', 'Class:', get_class($connection)));
+            $output->writeln(sprintf('  %-30s<info>%s</info>', 'Select read time:', $connectionReadTime[0] . '.' . $connectionReadTime[1] . ' sec.'));
+            $output->writeln('');
             $output->writeln('');
         }
 
