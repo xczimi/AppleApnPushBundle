@@ -137,4 +137,30 @@ class ApnPushManagerTest extends \PHPUnit_Framework_TestCase
         $manager = $this->getApnManager($container);
         $manager->getManager('key');
     }
+
+    /**
+     * Test create message
+     *
+     * @dataProvider providerCreateMessage
+     */
+    public function testCreateMessage($deviceToken, $body, $identifier)
+    {
+        $message = $this->getApnManager(new Container)->createMessage($deviceToken, $body, $identifier);
+        $this->assertEquals($deviceToken, $message->getDeviceToken());
+        $this->assertEquals($body, $message->getBody());
+        $this->assertEquals($identifier, $message->getIdentifier());
+    }
+
+    /**
+     * Provider for test create message
+     */
+    public function providerCreateMessage()
+    {
+        return array(
+            array(null, null, null),
+            array(str_repeat('af', 32), null, null),
+            array(null, 'foo', 1),
+            array(str_repeat('aa', 32), 'bar', 22)
+        );
+    }
 }
