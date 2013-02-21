@@ -23,8 +23,9 @@ class AppleApnPushBundle extends Bundle
     /**
      * {@inheritDoc}
      */
-    public function build(ContainerBuilder $builder)
+    public function build(ContainerBuilder $container)
     {
+        parent::build($container);
     }
 
     /**
