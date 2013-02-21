@@ -5,7 +5,7 @@
  *
  * (c) Vitaliy Zhuk <zhuk2205@gmail.com>
  *
- * For the full copyring and license information, please view the LICENSE
+ * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code
  */
 
@@ -81,7 +81,7 @@ class Configuration implements ConfigurationInterface
             ->addDefaultsIfNotSet()
             ->children()
                 // Enable push notification
-                ->scalarNode('enable')
+                ->booleanNode('enable')
                     ->defaultFalse()
                     ->info('Enable apn push notification')
                 ->end()
@@ -122,7 +122,7 @@ class Configuration implements ConfigurationInterface
 
                 ->scalarNode('default_passphrase')
                     ->defaultNull()
-                    ->info('Default passphrase for certificate fle with disable sandbox mode')
+                    ->info('Default passphrase for certificate file with disable sandbox mode')
                     ->end()
 
                 // Default certificate file for sandbox mode
