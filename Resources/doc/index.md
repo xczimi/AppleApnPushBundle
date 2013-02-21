@@ -76,3 +76,11 @@ $defaultManager = $notificationManagers->getManager('default');
 // Or
 $defaultManager = $notificationManagers->getManager(); // Get a default notification manager
 ```
+
+### Next Steps
+
+Now that you have completed the basic installation and configuration of the AppleApnPushBundle.
+
+The following documents are available:
+
+- [Command Line Tools](command_line.md)
