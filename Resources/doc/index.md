@@ -47,7 +47,6 @@ Minimal example:
 
 ```yml
 apple_apn_push:
-    enable: true
     notification_managers:
         default:
             certificate: "/path/to/your/certificate.pem"

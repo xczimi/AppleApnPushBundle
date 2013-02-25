@@ -34,7 +34,7 @@ class AppleApnPushExtension extends Extension
 
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
-        if ($config['enable']) {
+        if (!empty($config['notification_managers'])) {
             $loader->load('services.xml');
             $this->processApnPushManager($config, $container);
         }

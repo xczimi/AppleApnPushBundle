@@ -80,12 +80,6 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->addDefaultsIfNotSet()
             ->children()
-                // Enable push notification
-                ->booleanNode('enable')
-                    ->defaultFalse()
-                    ->info('Enable apn push notification')
-                ->end()
-
                 // Default notification manager
                 ->scalarNode('default_notification_manager')
                     ->defaultNull()

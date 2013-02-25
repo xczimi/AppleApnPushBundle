@@ -25,7 +25,6 @@ class ConfigurationApnPushTest extends AbstractConfigurationTest
     public function testDefaults()
     {
         $config = $this->process(array());
-        $this->assertFalse($config['enable']);
         $this->assertNull($config['default_notification_manager']);
         $this->assertNull($config['default_json_unescaped_unicode']);
         $this->assertEquals(array(1, 0), $config['default_read_time']);
