@@ -82,4 +82,7 @@ Now that you have completed the basic installation and configuration of the Appl
 
 The following documents are available:
 
+- [Manager configuration](manager_config.md)
+- [Use many managers](many_managers.md)
+- [Default parameters](default_parameters.md)
 - [Command Line Tools](command_line.md)
