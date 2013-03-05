@@ -47,12 +47,31 @@ class ApnPushController extends Controller
                     $formData['token'],
                     $formData['body']
                 );
+
+                if ($formData['badge']) {
+                    $message->getApsData()->setBadge($formData['badge']);
+                }
+
+                if ($formData['sound']) {
+                    $message->getApsData()->setSound($formData['sound']);
+                }
+
+                if ($formData['custom_data']) {
+                    if (!$otherData = @json_decode($formData['custom_data'], true)) {
+                        throw new \InvalidArgumentException(sprintf(
+                            'Can\'t decode custom data (JSON:json_decode). Last json error: "%s"',
+                            json_last_error()
+                        ));
+                    }
+
+                    $message->addCustomData($otherData);
+                }
             } catch (\InvalidArgumentException $e) {
                 $error = $e->getMessage();
                 goto _returnForm;
             }
 
-            $notification = $apnPush->getNotification($formData['notification']);
+            $notification = $apnPush->getManager($formData['notification']);
             try {
                 $sendStatus = $notification->sendMessage($message);
             } catch (SendExceptionInterface $e) {

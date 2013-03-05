@@ -5,4 +5,7 @@ form:
     submit: 'Отправить PUSH'
     title: 'Отправить PUSH уведомление'
     send_success: 'PUSH уведомление успешно доставлено'
+    badge: 'Знак (Badge)'
+    sound: 'Звук уведомления'
+    custom_data: 'Другие данные (JSON)'
     

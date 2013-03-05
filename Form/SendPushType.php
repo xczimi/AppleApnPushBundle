@@ -47,21 +47,39 @@ class SendPushType extends AbstractType
 
         $builder
             ->add('notification', 'choice', array(
-                'required' => TRUE,
+                'required' => true,
                 'choices' => $apnPushNotifications,
                 'label' => 'form.notification_manager',
                 'translation_domain' => 'apple_apn_push'
             ))
             ->add('token', 'text', array(
-                'required' => TRUE,
+                'required' => true,
                 'max_length' => 64,
                 'label' => 'form.device_token',
                 'translation_domain' => 'apple_apn_push'
             ))
             ->add('body', 'text', array(
-                'required' => TRUE,
+                'required' => true,
                 'max_length' => 255,
                 'label' => 'form.body_message',
+                'translation_domain' => 'apple_apn_push'
+            ))
+            ->add('badge', 'number', array(
+                'required' => false,
+                'label' => 'form.badge',
+                'translation_domain' => 'apple_apn_push',
+                'attr' => array(
+                    'min' => 0
+                )
+            ))
+            ->add('sound', 'text', array(
+                'required' => false,
+                'label' => 'form.sound',
+                'translation_domain' => 'apple_apn_push'
+            ))
+            ->add('custom_data', 'textarea', array(
+                'required' => false,
+                'label' => 'form.custom_data',
                 'translation_domain' => 'apple_apn_push'
             ))
         ;

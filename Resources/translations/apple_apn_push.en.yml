@@ -5,4 +5,7 @@ form:
     submit: 'Send message'
     title: 'Send push message'
     send_success: 'Push message successfully sent'
+    badge: 'Badge'
+    sound: 'Notification sound'
+    custom_data: 'Custom data (JSON)'
     

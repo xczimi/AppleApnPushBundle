@@ -63,7 +63,8 @@ input:focus, select:focus{ outline: none; }
 .field-item .label label{}
 .field-item .field-container{ float: right; width:  390px; }
 .field-item .field-container input[type="text"],
-.field-item .field-container select
+.field-item .field-container select,
+.field-item .field-container textarea
 {
     width: 380px;
     height: 25px;
@@ -74,6 +75,10 @@ input:focus, select:focus{ outline: none; }
     -webkit-border-radius: 5px;
     font-size: 14px;
     padding: 0 3px;
+}
+
+.field-item .field-container textarea{
+    height: 200px;
 }
 
 .submit{ float: right; width: 380px; text-align: center; }
