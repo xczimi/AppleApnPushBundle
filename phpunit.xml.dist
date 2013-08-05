@@ -12,7 +12,7 @@
          bootstrap="./Tests/bootstrap.php"
 >
     <testsuites>
-        <testsuite name="Apple apn push notification tests">
+        <testsuite name="AppleApnPush Bundle tests">
             <directory>./Tests/</directory>
         </testsuite>
     </testsuites>
