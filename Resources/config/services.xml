@@ -6,23 +6,22 @@
 
     <parameters>
         <parameter key="apple.apn_push.notification.class">Apple\ApnPush\Notification\Notification</parameter>
-        <parameter key="apple.apn_push.payload_factory.class">Apple\ApnPush\PayloadFactory\PayloadFactory</parameter>
-        <parameter key="apple.apn_push.connection.class">Apple\ApnPush\Connection\Connection</parameter>
+        <parameter key="apple.apn_push.notification.payload_factory.class">Apple\ApnPush\Notification\PayloadFactory</parameter>
+        <parameter key="apple.apn_push.notification.connection.class">Apple\ApnPush\Notification\Connection</parameter>
+
+        <parameter key="apple.apn_push.feedback.class">Apple\ApnPush\Feedback\Feedback</parameter>
+        <parameter key="apple.apn_push.feedback.connection.class">Apple\ApnPush\Feedback\Connection</parameter>
+
+        <parameter key="apple.apn_push.manager.class">Apple\ApnPushBundle\ApnPush\Manager</parameter>
+        <parameter key="apple.apn_push.class">Apple\ApnPushBundle\ApnPush\ApnPush</parameter>
         <parameter key="apple.apn_push.logger.class">%monolog.logger.class%</parameter>
-        <parameter key="apple.apn_push.class">Apple\ApnPushBundle\ApnPush\ApnPushManager</parameter>
     </parameters>
 
     <services>
-        <service id="apple.apn_push.notification" class="%apple.apn_push.notification.class%" abstract="true" />
-        <service id="apple.apn_push.connection" class="%apple.apn_push.connection.class%" abstract="true" />
-        <service id="apple.apn_push.payload_factory" class="%apple.apn_push.payload_factory.class%" abstract="true" />
-
         <service id="monolog.logger.apple.apn_push" class="%apple.apn_push.logger.class%" abstract="true">
             <argument />
         </service>
 
-        <service id="apple.apn_push" class="%apple.apn_push.class%">
-            <argument type="service" id="service_container" />
-        </service>
+        <service id="apple.apn_push" class="%apple.apn_push.class%" />
     </services>
 </container>

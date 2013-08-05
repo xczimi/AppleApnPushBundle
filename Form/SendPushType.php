@@ -11,9 +11,9 @@
 
 namespace Apple\ApnPushBundle\Form;
 
+use Apple\ApnPushBundle\ApnPush\ApnPush;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Apple\ApnPushBundle\ApnPush\ApnPushManagerInterface;
 
 /**
  * Send push form type
@@ -21,16 +21,16 @@ use Apple\ApnPushBundle\ApnPush\ApnPushManagerInterface;
 class SendPushType extends AbstractType
 {
     /**
-     * @var ApnPushManagerInterface
+     * @var ApnPush
      */
     protected $apnPush;
 
     /**
      * Construct
      *
-     * @param ApnPushManagerInterface
+     * @param ApnPush $apnPush
      */
-    public function __construct(ApnPushManagerInterface $apnPush)
+    public function __construct(ApnPush $apnPush)
     {
         $this->apnPush = $apnPush;
     }
@@ -40,16 +40,14 @@ class SendPushType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $apnPushNotifications = array_combine(
-            $this->apnPush->getManagerKeys(),
-            $this->apnPush->getManagerKeys()
-        );
+        $keys = array_keys($this->apnPush->all());
+        $apnPushManagers = array_combine($keys, $keys);
 
         $builder
-            ->add('notification', 'choice', array(
+            ->add('manager', 'choice', array(
                 'required' => true,
-                'choices' => $apnPushNotifications,
-                'label' => 'form.notification_manager',
+                'choices' => $apnPushManagers,
+                'label' => 'form.manager',
                 'translation_domain' => 'apple_apn_push'
             ))
             ->add('token', 'text', array(

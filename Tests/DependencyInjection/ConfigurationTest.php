@@ -25,7 +25,7 @@ class ConfigurationApnPushTest extends AbstractConfigurationTest
     public function testDefaults()
     {
         $config = $this->process(array());
-        $this->assertNull($config['default_notification_manager']);
+        $this->assertNull($config['default_manager']);
         $this->assertNull($config['default_json_unescaped_unicode']);
         $this->assertEquals(array(1, 0), $config['default_read_time']);
         $this->assertCount(0, $config['global_logger_handlers']);
@@ -33,7 +33,7 @@ class ConfigurationApnPushTest extends AbstractConfigurationTest
         $this->assertNull($config['default_passphrase']);
         $this->assertNull($config['default_sandbox_certificate_file']);
         $this->assertNull($config['default_sandbox_passphrase']);
-        $this->assertCount(0, $config['notification_managers']);
+        $this->assertCount(0, $config['managers']);
     }
 
     /**
@@ -133,12 +133,12 @@ class ConfigurationApnPushTest extends AbstractConfigurationTest
     public function testNotificationsDefault()
     {
         $config = $this->process(array(
-            'notification_managers' => array(
+            'managers' => array(
                 'default' => null
             )
         ));
 
-        $manager = $config['notification_managers']['default'];
+        $manager = $config['managers']['default'];
         $this->assertFalse($manager['sandbox']);
         $this->assertNull($manager['certificate']);
         $this->assertNull($manager['passphrase']);
@@ -156,7 +156,7 @@ class ConfigurationApnPushTest extends AbstractConfigurationTest
         }
 
         $config = $this->process(array(
-            'notification_managers' => array(
+            'managers' => array(
                 'default' => array(
                     'connection' => array(
                         'read_time' => $readTime
@@ -176,7 +176,7 @@ class ConfigurationApnPushTest extends AbstractConfigurationTest
         }
 
         $config = $this->process(array(
-            'notification_managers' => array(
+            'managers' => array(
                 'default' => array(
                     'payload_factory' => array(
                         'json_unescaped_unicode' => $option
@@ -196,7 +196,7 @@ class ConfigurationApnPushTest extends AbstractConfigurationTest
         }
 
         $config = $this->process(array(
-            'notification_managers' => array(
+            'managers' => array(
                 'default' => array(
                     'logger' => array(
                         'handlers' => $handlers
@@ -212,7 +212,7 @@ class ConfigurationApnPushTest extends AbstractConfigurationTest
     public function testNotificationBase()
     {
         $config = $this->process(array(
-            'notification_managers' => array(
+            'managers' => array(
                 'default' => array(
                     'certificate' => 'foo',
                     'passphrase' => 'bar',

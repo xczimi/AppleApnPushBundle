@@ -81,9 +81,9 @@ class Configuration implements ConfigurationInterface
             ->addDefaultsIfNotSet()
             ->children()
                 // Default notification manager
-                ->scalarNode('default_notification_manager')
+                ->scalarNode('default_manager')
                     ->defaultNull()
-                    ->info('Default notification manager')
+                    ->info('Default apn manager')
                 ->end()
 
                 // Default json unescaped unicode option
@@ -131,8 +131,9 @@ class Configuration implements ConfigurationInterface
                     ->end()
 
                 // Notification managers
-                ->arrayNode('notification_managers')
+                ->arrayNode('managers')
                     ->useAttributeAsKey('name')
+                    ->fixXmlConfig('manager')
                     ->prototype('array')
                     ->children()
                         // Payload factory configuration
@@ -153,7 +154,7 @@ class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
 
-                        // Connection configuration
+                        // Notificaiton connection configuration
                         ->arrayNode('connection')
                             ->children()
                                 ->append($this->createApnPushConnectionReadTimeTree('read_time'))

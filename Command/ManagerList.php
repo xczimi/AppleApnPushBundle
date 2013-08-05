@@ -36,31 +36,32 @@ class ManagerList extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $nm = $this->getContainer()->get('apple.apn_push');
+        $apnPush = $this->getContainer()->get('apple.apn_push');
 
-        if (!count($keys = $this->getContainer()->getParameter('apple.apn_push.managers'))) {
-            $output->writeln('<error>Notitication managers not found. Size: 0.</error>');
+        if (!count($keys = array_keys($apnPush->all()))) {
+            $output->writeln('<error>Managers not found. Size: 0.</error>');
         }
 
-        $output->writeln(sprintf('<comment>Default notification: </comment><info>%s</info>', $nm->getDefaultManagerKey()));
+        $output->writeln(sprintf('<comment>Default manager: </comment><info>%s</info>', $apnPush->getDefault()));
         $output->writeln('');
 
-        $output->writeln('<comment>Notification manager list:</comment>');
+        $output->writeln('<comment>Managers list:</comment>');
         $output->writeln('');
 
         foreach ($keys as $key) {
-            $manager = $nm->getManager($key);
-            $payload = $manager->getPayloadFactory();
-            $connection = $manager->getConnection();
+            $manager = $apnPush->getManager($key);
+            $notification = $manager->getNotification();
+            $payload = $notification->getPayloadFactory();
+            $connection = $notification->getConnection();
             $connectionReadTime = $connection->getReadTime();
 
             $output->writeln(sprintf('<info>%s:</info>', $key));
-            $output->writeln('<comment>Notification manager:</comment>');
+            $output->writeln('<comment>Notification:</comment>');
             $output->writeln(sprintf('  %-30s<info>%s</info>', 'Class:', get_class($manager)));
             $output->writeln('<comment>Payload factory:</comment>');
             $output->writeln(sprintf('  %-30s<info>%s</info>', 'Class:', get_class($payload)));
             $output->writeln(sprintf('  %-30s<info>%s</info>', 'Json unescaped unicode:', $payload->getJsonUnescapedUnicode() ? 'true' : 'false'));
-            $output->writeln('<comment>Connection:</comment>');
+            $output->writeln('<comment>Notification connection:</comment>');
             $output->writeln(sprintf('  %-30s<info>%s</info>', 'Class:', get_class($connection)));
             $output->writeln(sprintf('  %-30s<info>%s</info>', 'Select read time:', $connectionReadTime[0] . '.' . $connectionReadTime[1] . ' sec.'));
             $output->writeln('');

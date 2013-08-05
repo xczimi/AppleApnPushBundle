@@ -20,7 +20,7 @@ apple_apn_push:
     default_certificate_file: "/path/to/your/certificate.pem"
     global_logger_handlers: [ apn_push_handler ]
 
-    notification_managers:
+    managers:
         default: ~
 
         sandbox:

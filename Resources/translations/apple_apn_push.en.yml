@@ -1,6 +1,6 @@
 form:
     device_token: 'Device token'
-    notification_manager: 'Notification manager'
+    manager: 'Manager'
     body_message: 'Message text'
     submit: 'Send message'
     title: 'Send push message'

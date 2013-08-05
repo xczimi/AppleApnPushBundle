@@ -9,7 +9,7 @@
  * file that was distributed with this source code
  */
 
-namespace Apple\ApnPushBundle\Exceptions;
+namespace Apple\ApnPushBundle\Exception;
 
 /**
  * Control manager not found exceptions

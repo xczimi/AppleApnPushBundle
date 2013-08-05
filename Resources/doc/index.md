@@ -47,7 +47,7 @@ Minimal example:
 
 ```yml
 apple_apn_push:
-    notification_managers:
+    managers:
         default:
             certificate: "/path/to/your/certificate.pem"
 ```
@@ -70,10 +70,19 @@ All managers saved in `apple.apn_push` service.
 Example get default manager:
 
 ```php
-$notificationManagers = $container->get('apple.apn_push');
-$defaultManager = $notificationManagers->getManager('default');
+$apnPush = $container->get('apple.apn_push');
+$defaultManager = $apnPush->getManager('default');
 // Or
-$defaultManager = $notificationManagers->getManager(); // Get a default notification manager
+$defaultManager = $apnPush->getManager(); // Get a default notification manager
+
+// Get notification service
+$notification = $defaultManager->getNotification();
+// Get feedback service
+$notification = $defaultManager->getFeedback();
+
+// Alias for send message
+$defaultManager->sendMessage($message);
+// Message must be instance \Apple\ApnPush\Notification\MessageInterface interface
 ```
 
 ### Next Steps

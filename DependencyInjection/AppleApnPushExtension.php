@@ -34,7 +34,7 @@ class AppleApnPushExtension extends Extension
 
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
-        if (!empty($config['notification_managers'])) {
+        if (!empty($config['managers'])) {
             $loader->load('services.xml');
             $this->processApnPushManager($config, $container);
         }
@@ -45,84 +45,57 @@ class AppleApnPushExtension extends Extension
      *
      * @param array $config
      * @param ContainerBuilder $container
+     * @throws \RuntimeException
      */
     protected function processApnPushManager(array $config, ContainerBuilder $container)
     {
-        if (!count($config['notification_managers'])) {
-            throw new \RuntimeException('Not found apn push managers. Please configure "apple.apn_push.notification_managers" or disable notification system.');
+        // Managers not found
+        if (!count($config['managers'])) {
+            throw new \RuntimeException('Not found apn push managers. Please configure "apple.apn_push.managers" or disable notification system.');
         }
 
-        if (count($config['notification_managers']) > 1) {
-            if (empty($config['default_notification_manager'])) {
-                throw new \RuntimeException('Please configure parameter "apple.apn_push.default_notification_manager".');
+        // Get default manager key
+        if (count($config['managers']) > 1) {
+            if (empty($config['default_manager'])) {
+                throw new \RuntimeException('Please configure parameter "apple.apn_push.default_manager".');
             }
 
-            $defaultNotification = $config['default_notification_manager'];
-        } else if (!$config['default_notification_manager']) {
-            list ($defaultNotification, $null) = each ($config['notification_managers']);
-            reset ($config['notification_managers']);
+            $defaultManager = $config['default_manager'];
+        } else if (!$config['default_manager']) {
+            list ($defaultManager, $null) = each($config['managers']);
+            reset ($config['managers']);
         } else {
-            $defaultNotification = $config['default_notification_manager'];
+            $defaultManager = $config['default_manager'];
         }
 
-        if (!isset($config['notification_managers'][$defaultNotification])) {
+        // Default manager not found
+        if (!isset($config['managers'][$defaultManager])) {
             throw new \RuntimeException(sprintf(
                 'Undefined default notification manager "%s". Allowed managers: "%s".',
-                $defaultNotification,
-                implode('", "', array_keys($config['notification_managers']))
+                $defaultManager,
+                implode('", "', array_keys($config['managers']))
             ));
         }
 
-        foreach ($config['notification_managers'] as $managerName => $managerInfo) {
-            // Set default certificate
+        $apnPushDefinition = $container->getDefinition('apple.apn_push');
+        $apnPushDefinition
+            ->addMethodCall('setDefault', array($defaultManager));
+
+        foreach ($config['managers'] as $managerName => $managerInfo) {
+            // Set default parameters
             $managerInfo = $this->setDefaultsApnPushManager($managerName, $managerInfo, $config);
 
-            // Check file
-            if (!file_exists($managerInfo['certificate']) || !is_file($managerInfo['certificate'])) {
-                throw new \RuntimeException(sprintf(
-                    'Ceritifcate file "%s" not found.',
-                    $managerInfo['certificate']
-                ));
-            }
-
-            // Check file readable
-            if (!is_readable($managerInfo['certificate'])) {
-                throw new \RuntimeException(sprintf(
-                    'Ceritificate file "%s" not readable!',
-                    $managerInfo['certificate']
-                ));
-            }
-
-            // Create connection
-            $connectionId = sprintf('apple.apn_push.%s_connection', $managerName);
-            $container->setDefinition($connectionId, new DefinitionDecorator('apple.apn_push.connection'))
-                ->setArguments(array(
-                    $managerInfo['certificate'],
-                    $managerInfo['passphrase'],
-                    (bool) $managerInfo['sandbox']
-                ));
-
-            // Set read time to connection
-            $container->getDefinition($connectionId)
-                ->addMethodCall('setReadTime', $managerInfo['connection']['read_time']);
-
-            // Create payload
-            $payloadFactoryId = sprintf('apple.apn_push.%s_payload_factory', $managerName);
-            $container->setDefinition($payloadFactoryId, new DefinitionDecorator('apple.apn_push.payload_factory'))
-                ->setArguments(array());
-
-            // Usage JSON_UNESCAPED_UNICODE
-            if (true === $managerInfo['payload_factory']['json_unescaped_unicode']) {
-                $container->getDefinition($payloadFactoryId)
-                    ->addMethodCall('setJsonUnescapedUnicode', array(true));
-            }
-
             // Create notification service
-            $container->setDefinition(sprintf('apple.apn_push.%s_notification', $managerName), new DefinitionDecorator('apple.apn_push.notification'))
-                ->setArguments(array(
-                    new Reference($payloadFactoryId),
-                    new Reference($connectionId)
-                ));
+            $notification = $this->createNotification($container, $managerInfo);
+
+            $notificationId = sprintf('apple.apn_push.%s_notification', $managerName);
+            $container->setDefinition($notificationId, $notification);
+
+            // Create feedback service
+            $feedback = $this->createFeedback($container, $managerInfo);
+
+            $feedbackId = sprintf('apple.apn_push.%s_feedback', $managerName);
+            $container->setDefinition($feedbackId, $feedback);
 
             // Logger
             if (!empty($managerInfo['logger']) && !empty($managerInfo['logger']['handlers'])) {
@@ -139,15 +112,120 @@ class AppleApnPushExtension extends Extension
 
                 $container->setDefinition(sprintf('apple.apn_push.%s_logger', $managerName), $logger);
 
-                $container->getDefinition(sprintf('apple.apn_push.%s_notification', $managerName))
+                $notification
+                    ->addMethodCall('setLogger', array(
+                        new Reference(sprintf('apple.apn_push.%s_logger', $managerName))
+                    ));
+
+                $feedback
                     ->addMethodCall('setLogger', array(
                         new Reference(sprintf('apple.apn_push.%s_logger', $managerName))
                     ));
             }
+
+            // Create manager definition
+            $managerId = sprintf('apple.apn_push.%s_manager', $managerName);
+            $manager = new Definition($container->getParameter('apple.apn_push.manager.class'));
+            $manager->setArguments(array(new Reference($notificationId), new Reference($feedbackId)));
+
+            $container->setDefinition($managerId, $manager);
+
+            $apnPushDefinition
+                ->addMethodCall('add', array($managerName, new Reference($managerId)));
+        }
+    }
+
+    /**
+     * Create notification system for manager
+     *
+     * @param ContainerBuilder $container
+     * @param array $info
+     * @throws \RuntimeException
+     * @return \Symfony\Component\DependencyInjection\Definition
+     */
+    private function createNotification(ContainerBuilder $container, array $info)
+    {
+        // Check certificate file
+        if (!file_exists($info['certificate']) || !is_file($info['certificate'])) {
+            throw new \RuntimeException(sprintf(
+                'Certificate file "%s" not found.',
+                $info['certificate']
+            ));
         }
 
-        $container->setParameter('apple.apn_push.default_manager', $defaultNotification);
-        $container->setParameter('apple.apn_push.managers', array_keys($config['notification_managers']));
+        // Check certificate file readable
+        if (!is_readable($info['certificate'])) {
+            throw new \RuntimeException(sprintf(
+                'Certificate file "%s" not readable!',
+                $info['certificate']
+            ));
+        }
+
+        // Create connection
+        $connection = new Definition($container->getParameter('apple.apn_push.notification.connection.class'));
+        $connection
+            ->setArguments(array(
+                $info['certificate'],
+                $info['passphrase'],
+                (bool) $info['sandbox']
+            ))
+            ->addMethodCall('setReadTime', $info['connection']['read_time']);
+
+        // Create payload factory
+        $payloadFactory = new Definition($container->getParameter('apple.apn_push.notification.payload_factory.class'));
+        $payloadFactory->setArguments(array());
+
+        // Usage JSON_UNESCAPED_UNICODE
+        if (true === $info['payload_factory']['json_unescaped_unicode']) {
+            $payloadFactory->addMethodCall('setJsonUnescapedUnicode', array(true));
+        }
+
+        // Create notification service
+        $notification = new Definition($container->getParameter('apple.apn_push.notification.class'));
+        $notification->setArguments(array($connection, $payloadFactory));
+
+        return $notification;
+    }
+
+    /**
+     * Create feedback service
+     *
+     * @param ContainerBuilder $container
+     * @param array $info
+     */
+    private function createFeedback(ContainerBuilder $container, array $info)
+    {
+        // Check certificate file
+        if (!file_exists($info['certificate']) || !is_file($info['certificate'])) {
+            throw new \RuntimeException(sprintf(
+                'Certificate file "%s" not found.',
+                $info['certificate']
+            ));
+        }
+
+        // Check certificate file readable
+        if (!is_readable($info['certificate'])) {
+            throw new \RuntimeException(sprintf(
+                'Certificate file "%s" not readable!',
+                $info['certificate']
+            ));
+        }
+
+        // Create connection
+        $connection = new Definition($container->getParameter('apple.apn_push.feedback.connection.class'));
+        $connection
+            ->setArguments(array(
+                $info['certificate'],
+                $info['passphrase'],
+                (bool) $info['sandbox']
+            ));
+
+        // Create feedback service
+        $feedback = new Definition($container->getParameter('apple.apn_push.feedback.class'));
+        $feedback
+            ->setArguments(array($connection));
+
+        return $feedback;
     }
 
     /**
@@ -156,19 +234,18 @@ class AppleApnPushExtension extends Extension
      * @param string $managerName
      * @param array $managerInfo
      * @param array $config
+     * @throws \RuntimeException
+     * @return array
      */
     private function setDefaultsApnPushManager($managerName, array $managerInfo, array $config)
     {
         // Add defaults
         $managerInfo += array(
-            'service' => null,
             'loggers' => array(),
             'connection' => array(
-                'service' => null,
                 'read_time' => null
             ),
             'payload_factory' => array(
-                'service' => null,
                 'json_unescaped_unicode' => null
             ),
             'logger' => array(
@@ -182,7 +259,7 @@ class AppleApnPushExtension extends Extension
             if (false === $managerInfo['sandbox']) {
                 if (!$config['default_certificate_file']) {
                     throw new \RuntimeException(sprintf(
-                        'Please set ceritificate file for manager "%s" or set default certificate file.',
+                        'Please set certificate file for manager "%s" or set default certificate file.',
                         $managerName
                     ));
                 }

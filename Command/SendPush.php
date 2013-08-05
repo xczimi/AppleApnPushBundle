@@ -43,13 +43,18 @@ class SendPush extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $nm = $this->getContainer()->get('apple.apn_push');
+        $apnPush = $this->getContainer()->get('apple.apn_push');
 
-        $notification = $nm->getManager($input->getOption('manager'));
+        $manager = $apnPush->getManager($input->getOption('manager'));
 
-        $message = $nm->createMessage($input->getArgument('device-token'), $input->getArgument('message'));
+        $message = $manager->createMessage(
+            $input->getArgument('device-token'),
+            $input->getArgument('message'),
+            $input->getOption('sound'),
+            $input->getOption('badge')
+        );
 
-        $notification->sendMessage($message);
+        $manager->sendMessage($message);
 
         $output->writeln('<info>Success send message.</info>');
     }

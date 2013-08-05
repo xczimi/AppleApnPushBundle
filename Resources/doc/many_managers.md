@@ -8,8 +8,8 @@ All manager must be specified in parameter: `apple_apn_push.notification_manager
 Example usage:
 ```yml
 apple_apn_push:
-    default_notification_manager: default
-    notification_managers:
+    default_manager: default
+    managers:
         default:
             certificate: "/path/to/your/certificate.pem"
 
@@ -21,7 +21,7 @@ apple_apn_push:
 Getting manager from service container:
 
 ```php
-$notificationManagers = $container->get('apple.apn_push');
+$apnPush = $container->get('apple.apn_push');
 $managerName = 'second_manager';
-$manager = $notificationManagers->getManager($managerName);
+$manager = $apnPush->getManager($managerName);
 ```

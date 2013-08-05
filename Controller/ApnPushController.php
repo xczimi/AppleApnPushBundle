@@ -14,7 +14,7 @@ namespace Apple\ApnPushBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Apple\ApnPushBundle\Form\SendPushType;
-use Apple\ApnPush\Notification\SendExceptionInterface;
+use Apple\ApnPush\Notification\SendException;
 
 /**
  * Apn push actions
@@ -31,7 +31,7 @@ class ApnPushController extends Controller
         $apnPush = $this->get('apple.apn_push');
 
         $form = $this->createForm(new SendPushType($apnPush), array(
-            'notification' => $apnPush->getDefaultManagerKey()
+            'default' => $apnPush->getDefault()
         ));
 
         // Errors and status
@@ -41,19 +41,23 @@ class ApnPushController extends Controller
             $form->bind($request);
             $formData = $form->getData();
 
+            // Get manager
+            $manager = $apnPush->getManager($formData['manager']);
+
             // Create message
             try {
-                $message = $apnPush->createMessage(
+                /** @var \Apple\ApnPush\Notification\MessageInterface $message */
+                $message = $manager->createMessage(
                     $formData['token'],
                     $formData['body']
                 );
 
                 if ($formData['badge']) {
-                    $message->getApsData()->setBadge($formData['badge']);
+                    $message->setBadge($formData['badge']);
                 }
 
                 if ($formData['sound']) {
-                    $message->getApsData()->setSound($formData['sound']);
+                    $message->setSound($formData['sound']);
                 }
 
                 if ($formData['custom_data']) {
@@ -64,17 +68,16 @@ class ApnPushController extends Controller
                         ));
                     }
 
-                    $message->addCustomData($otherData);
+                    $message->setCustomData($otherData);
                 }
             } catch (\InvalidArgumentException $e) {
                 $error = $e->getMessage();
                 goto _returnForm;
             }
 
-            $notification = $apnPush->getManager($formData['notification']);
             try {
-                $sendStatus = $notification->sendMessage($message);
-            } catch (SendExceptionInterface $e) {
+                $sendStatus = $manager->sendMessage($message);
+            } catch (SendException $e) {
                 $error = (string) $e;
             }
         }
