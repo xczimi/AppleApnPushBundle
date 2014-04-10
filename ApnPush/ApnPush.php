@@ -84,7 +84,7 @@ class ApnPush
     }
 
     /**
-     * @alias: get
+     * _alias: get
      * @return ManagerInterface
      */
     public function getManager($name = null)
